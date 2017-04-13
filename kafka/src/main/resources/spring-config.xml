@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="messageListener" class="com.frotly.mq.MessageListenerImpl"></bean>
+    <!-- 导入Spring配置文件 -->
+    <bean id="consumer" class="com.alibaba.rocketmq.client.consumer.DefaultMQPushConsumer" init-method="start"
+          destroy-method="shutdown">
+        <property name="consumerGroup" value="consumerGroup"/>
+        <property name="namesrvAddr" value="127.0.0.1:9876"/>
+        <property name="messageListener" ref="messageListener"/>
+        <property name="subscription">
+            <map>
+                <entry key="TopicTest1">
+                    <value>TagA || TagB || TagC</value>
+                </entry>
+                <entry key="TopicTest2">
+                    <value>*</value>
+                </entry>
+            </map>
+        </property>
+    </bean>
+    <bean id="producer" class="com.alibaba.rocketmq.client.producer.DefaultMQProducer" init-method="start"
+          destroy-method="shutdown">
+        <property name="producerGroup" value="producerGroup"/>
+        <property name="namesrvAddr" value="127.0.0.1:9876"/>
+    </bean>
+</beans>
